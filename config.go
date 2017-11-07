@@ -2,10 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
-	"os/user"
-	"path/filepath"
 )
 
 const configFile = ".deltarc"
@@ -21,19 +17,15 @@ type Config struct {
 }
 
 func loadConfig() (config Config, err error) {
-	usr, err := user.Current()
-	if err != nil {
-		return
-	}
-	deltarc := filepath.Join(usr.HomeDir, configFile)
-	f, err := os.Open(deltarc)
-	if (err != nil && os.IsExist(err)) || f == nil {
-		return
-	}
-	d, err := ioutil.ReadAll(f)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(d, &config)
+	cfg := `{
+  "context": 9,
+  "showEmpty": true,
+  "shouldCollapse": false,
+  "highlight": false,
+  "unmodifiedOpacity": 0.8,
+  "diffFontSize": 12
+}
+`
+	err = json.Unmarshal([]byte(cfg), &config)
 	return
 }

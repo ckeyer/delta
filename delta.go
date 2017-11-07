@@ -37,6 +37,22 @@ const (
 	FormatOptionHTML    = "html"
 	FormatOptionText    = "text"
 	FormatOptionDefault = "default"
+
+	compareHTML = `<!DOCTYPE html>
+<html>
+  <head>
+    <style>{{ .CSS }}</style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="diff">
+        <div class="diff-contents">
+          {{ .content }}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>`
 )
 
 var (
@@ -170,6 +186,7 @@ func html(d *delta.DiffSolution, pathFrom, pathTo, pathBase string, config Confi
 
 	wd, _ := os.Getwd()
 	html := formatter.HTML(d)
+	fmt.Println("html ", html)
 	m := &Metadata{
 		From:      pathFrom,
 		To:        pathTo,
@@ -182,21 +199,15 @@ func html(d *delta.DiffSolution, pathFrom, pathTo, pathBase string, config Confi
 	}
 	meta, _ := json.Marshal(m)
 	cfg, _ := json.Marshal(config)
-	tmpl := template.Must(template.New("compare").Parse(getAsset("compare.html")))
+	tmpl := template.Must(template.New("compare").Parse(compareHTML))
 	buf := &bytes.Buffer{}
 	err := tmpl.Execute(buf, map[string]interface{}{
 		"metadata": template.JS(string(meta)),
 		"config":   template.JS(cfg),
 		"content":  template.HTML(html),
 		"CSS":      template.CSS(getAsset("app.css")),
-		"JS": map[string]interface{}{
-			"mithril":   template.JS(getAsset("vendor/mithril.min.js")),
-			"mousetrap": template.JS(getAsset("vendor/mousetrap.min.js")),
-			"highlight": template.JS(getAsset("vendor/highlight.min.js")),
-			"pouchdb":   template.JS(getAsset("vendor/pouchdb.min.js")),
-			"app":       template.JS(getAsset("app.js")),
-		},
 	})
+
 	return buf, err
 }
 

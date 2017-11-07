@@ -2,3 +2,4 @@ node_modules
 browser/app.css
 browser/app.js
 browser/bindata.go
+delta

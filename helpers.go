@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"crypto/md5"
 	"encoding/hex"
+	"io"
 
 	"github.com/octavore/delta/browser"
 )
@@ -12,7 +15,16 @@ func getAsset(path string) string {
 	if err != nil {
 		panic(err)
 	}
-	return string(a)
+
+	gz, err := gzip.NewReader(bytes.NewBuffer(a))
+	if err != nil {
+		panic(err)
+	}
+
+	buf := &bytes.Buffer{}
+	io.Copy(buf, gz)
+
+	return buf.String()
 }
 
 func md5sum(s string) string {

@@ -164,8 +164,8 @@ func HTML(d *delta.DiffSolution) string {
 	lb.WriteString("</div></div>")
 	rb.WriteString("</div></div>")
 	ll.WriteString("</div>")
-	lbs := strings.Replace(lb.String(), "\t", "<span class='delta-tab'>\t</span>", -1)
-	rbs := strings.Replace(rb.String(), "\t", "<span class='delta-tab'>\t</span>", -1)
+	lbs := strings.Replace(lb.String(), "\t", `<span class="delta-tab"> </span>`, -1)
+	rbs := strings.Replace(rb.String(), "\t", `<span class="delta-tab"> </span>`, -1)
 	if li == 0 {
 		return rg.String() + rbs
 	}
